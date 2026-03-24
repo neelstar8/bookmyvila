@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookMyVilla — Luxury Private Villas</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <style>
+/* ═══════════════════════════════════════
+   BOOKMYVILLA — style.css
+   ═══════════════════════════════════════ */
+
+/* ── CSS VARIABLES ── */
+:root {
+  --cream: #f5f0e8;
+  --warm-white: #faf8f4;
+  --charcoal: #1a1612;
+  --sand: #c8a96e;
+  --sand-light: #e8d5a8;
+  --muted: #7a6e60;
+  --border: rgba(200,169,110,0.25);
+  --glass: rgba(245,240,232,0.06);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--charcoal);
+  color: var(--cream);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ════════════════════════════════
+   CUSTOM CURSOR
+════════════════════════════════ */
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--sand);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transition: transform 0.15s ease, opacity 0.2s;
+  transform: translate(-50%,-50%);
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(200,169,110,0.5);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transition: transform 0.4s ease;
+  transform: translate(-50%,-50%);
+}
+body:hover .cursor { opacity: 1; }
+
+/* ════════════════════════════════
+   LOADER
+════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0;
+  background: var(--charcoal);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 8888;
+  flex-direction: column; gap: 24px;
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+#loader.hide { opacity: 0; visibility: hidden; }
+.loader-wordmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  color: var(--cream);
+}
+.loader-wordmark span { color: var(--sand); }
+.loader-bar {
+  width: 180px; height: 1px;
+  background: rgba(200,169,110,0.2);
+  position: relative; overflow: hidden;
+}
+.loader-bar::after {
+  content: '';
+  position: absolute; left: -100%; top: 0;
+  width: 100%; height: 100%;
+  background: var(--sand);
+  animation: load-fill 1.8s ease forwards;
+}
+@keyframes load-fill { to { left: 0; } }
+
+/* ════════════════════════════════
+   NAV
+════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 24px 6vw;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background 0.4s, padding 0.4s;
+}
+nav.scrolled {
+  background: rgba(26,22,18,0.92);
+  backdrop-filter: blur(16px);
+  padding: 16px 6vw;
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 300;
+  letter-spacing: 0.2em; text-decoration: none;
+  color: var(--cream);
+}
+.nav-logo em { color: var(--sand); font-style: normal; }
+.nav-links {
+  display: flex; gap: 36px; list-style: none;
+  align-items: center;
+}
+.nav-links a {
+  text-decoration: none; color: rgba(245,240,232,0.7);
+  font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--sand); }
+.nav-cta {
+  background: transparent;
+  border: 1px solid var(--sand);
+  color: var(--sand) !important;
+  padding: 8px 20px !important;
+  border-radius: 2px;
+  transition: background 0.3s, color 0.3s !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.15em !important;
+}
+.nav-cta:hover { background: var(--sand) !important; color: var(--charcoal) !important; }
+
+/* ════════════════════════════════
+   HERO
+════════════════════════════════ */
+#hero {
+  height: 100vh; position: relative;
+  display: flex; align-items: flex-end;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #0d0b09 0%, #2a1f12 40%, #1a1408 100%);
+}
+.hero-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(200,169,110,0.04) 80px, rgba(200,169,110,0.04) 81px),
+    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(200,169,110,0.04) 80px, rgba(200,169,110,0.04) 81px);
+}
+.hero-img {
+  position: absolute; inset: 0;
+  background: url('https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1800&q=80') center/cover;
+  opacity: 0.45;
+  transform: scale(1.05);
+  animation: hero-zoom 12s ease-out forwards;
+}
+@keyframes hero-zoom { to { transform: scale(1); } }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(26,22,18,0.95) 0%, rgba(26,22,18,0.2) 60%, transparent 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 0 6vw 10vh;
+  max-width: 900px;
+}
+.hero-eyebrow {
+  font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--sand); margin-bottom: 20px;
+  opacity: 0; animation: fade-up 1s 2s ease forwards;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  font-weight: 300; line-height: 0.92;
+  letter-spacing: -0.01em;
+  margin-bottom: 28px;
+  opacity: 0; animation: fade-up 1s 2.2s ease forwards;
+}
+.hero-title em { font-style: italic; color: var(--sand); }
+.hero-sub {
+  font-size: 1rem; font-weight: 300;
+  color: rgba(245,240,232,0.65); max-width: 460px;
+  line-height: 1.7; margin-bottom: 44px;
+  opacity: 0; animation: fade-up 1s 2.4s ease forwards;
+}
+.hero-actions {
+  display: flex; gap: 16px; align-items: center;
+  opacity: 0; animation: fade-up 1s 2.6s ease forwards;
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.btn-primary {
+  background: var(--sand);
+  color: var(--charcoal);
+  border: none; padding: 16px 36px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.2em;
+  text-transform: uppercase; cursor: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none; display: inline-block;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(200,169,110,0.3); }
+.btn-ghost {
+  background: transparent;
+  color: var(--cream); border: 1px solid rgba(245,240,232,0.3);
+  padding: 16px 36px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.2em;
+  text-transform: uppercase; cursor: none;
+  transition: border-color 0.3s, color 0.3s;
+  text-decoration: none; display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--sand); color: var(--sand); }
+.hero-scroll {
+  position: absolute; right: 6vw; bottom: 10vh;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  opacity: 0; animation: fade-up 1s 3s ease forwards;
+}
+.hero-scroll span {
+  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(245,240,232,0.4); writing-mode: vertical-lr;
+}
+.scroll-line {
+  width: 1px; height: 60px;
+  background: linear-gradient(to bottom, var(--sand), transparent);
+  animation: scroll-pulse 2s infinite;
+}
+@keyframes scroll-pulse {
+  0%,100% { opacity: 0.3; transform: scaleY(1); }
+  50%      { opacity: 1;   transform: scaleY(1.1); }
+}
+
+/* ════════════════════════════════
+   STATS BAR
+════════════════════════════════ */
+.stats-bar {
+  background: rgba(200,169,110,0.08);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 32px 6vw;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 24px;
+}
+.stat { text-align: center; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem; font-weight: 300;
+  color: var(--sand); display: block; line-height: 1;
+}
+.stat-label {
+  font-size: 0.7rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 6px; display: block;
+}
+
+/* ════════════════════════════════
+   SECTION COMMON
+════════════════════════════════ */
+section { padding: 120px 6vw; }
+.section-eyebrow {
+  font-size: 0.7rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--sand);
+  margin-bottom: 16px; display: block;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 300; line-height: 1.1;
+  margin-bottom: 20px;
+}
+.section-title em { font-style: italic; color: var(--sand); }
+.section-desc {
+  color: rgba(245,240,232,0.55);
+  font-weight: 300; line-height: 1.8;
+  max-width: 500px; font-size: 0.95rem;
+}
+.divider {
+  width: 60px; height: 1px; background: var(--sand);
+  margin: 0 0 32px;
+}
+
+/* ════════════════════════════════
+   REVEAL ON SCROLL
+════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ════════════════════════════════
+   VILLAS SECTION
+════════════════════════════════ */
+#villas { background: var(--charcoal); }
+.villas-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 64px; flex-wrap: wrap; gap: 24px;
+}
+.villas-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+}
+@media(max-width:900px) { .villas-grid { grid-template-columns: 1fr; } }
+
+.villa-card {
+  position: relative; overflow: hidden;
+  aspect-ratio: 3/4;
+  cursor: none;
+}
+.villa-card:first-child { aspect-ratio: auto; grid-row: span 2; }
+.villa-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.villa-card:hover .villa-img { transform: scale(1.06); }
+.villa-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(26,22,18,0.9) 0%, rgba(26,22,18,0.1) 55%, transparent 100%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 32px;
+}
+.villa-tag {
+  position: absolute; top: 20px; left: 20px;
+  background: var(--sand); color: var(--charcoal);
+  font-size: 0.62rem; letter-spacing: 0.25em;
+  text-transform: uppercase; padding: 5px 12px;
+  font-weight: 500;
+}
+.villa-rating {
+  position: absolute; top: 20px; right: 20px;
+  display: flex; align-items: center; gap: 5px;
+  color: var(--sand); font-size: 0.78rem;
+}
+.villa-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 300; line-height: 1.1;
+  margin-bottom: 6px;
+}
+.villa-location {
+  font-size: 0.72rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(245,240,232,0.55);
+  margin-bottom: 16px;
+}
+.villa-meta {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.villa-meta span {
+  font-size: 0.72rem; color: rgba(245,240,232,0.6);
+  display: flex; align-items: center; gap: 5px;
+}
+.villa-price-row {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.villa-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 300;
+  color: var(--sand);
+}
+.villa-price small {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem; color: rgba(245,240,232,0.4);
+  letter-spacing: 0.1em;
+}
+.villa-book-btn {
+  background: var(--sand); color: var(--charcoal);
+  border: none; padding: 10px 20px;
+  font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; cursor: none;
+  transition: background 0.3s, transform 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+}
+.villa-book-btn:hover { background: var(--sand-light); transform: scale(1.02); }
+
+/* ════════════════════════════════
+   GALLERY STRIP
+════════════════════════════════ */
+.gallery-strip { padding: 0; overflow: hidden; }
+.gallery-track {
+  display: flex; gap: 3px;
+  animation: marquee-gallery 25s linear infinite;
+  width: max-content;
+}
+.gallery-track img {
+  height: 280px; width: 380px;
+  object-fit: cover; flex-shrink: 0;
+  filter: grayscale(20%); transition: filter 0.3s;
+}
+.gallery-track img:hover { filter: grayscale(0%); }
+@keyframes marquee-gallery {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ════════════════════════════════
+   EXPERIENCE SECTION
+════════════════════════════════ */
+#experience {
+  background: linear-gradient(180deg, var(--charcoal) 0%, #110e0a 100%);
+  position: relative; overflow: hidden;
+}
+#experience::before {
+  content: '';
+  position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.exp-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  margin-top: 64px;
+}
+@media(max-width:800px) { .exp-grid { grid-template-columns:1fr; gap:40px; } }
+.exp-visual {
+  position: relative; height: 540px;
+}
+.exp-img-main {
+  position: absolute; right: 0; top: 0;
+  width: 82%; height: 82%;
+  object-fit: cover;
+}
+.exp-img-accent {
+  position: absolute; left: 0; bottom: 0;
+  width: 55%; height: 50%;
+  object-fit: cover;
+  border: 4px solid var(--charcoal);
+}
+.exp-badge {
+  position: absolute; right: -20px; top: 50%;
+  transform: translateY(-50%);
+  background: var(--sand);
+  color: var(--charcoal);
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  animation: badge-spin 20s linear infinite;
+}
+@keyframes badge-spin {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to   { transform: translateY(-50%) rotate(360deg); }
+}
+.exp-badge-inner {
+  animation: badge-spin-reverse 20s linear infinite;
+  display: flex; flex-direction: column; align-items: center;
+}
+@keyframes badge-spin-reverse {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+.exp-badge .num { font-size: 2rem; font-weight: 300; line-height: 1; }
+.exp-badge .lbl {
+  font-size: 0.55rem; letter-spacing: 0.1em;
+  font-family: 'DM Sans', sans-serif;
+  text-transform: uppercase;
+}
+.exp-features {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; margin-top: 40px;
+}
+.exp-feature {
+  padding: 20px;
+  border: 1px solid var(--border);
+  transition: border-color 0.3s, background 0.3s;
+}
+.exp-feature:hover {
+  border-color: var(--sand);
+  background: rgba(200,169,110,0.04);
+}
+.exp-icon { font-size: 1.4rem; margin-bottom: 10px; }
+.exp-feat-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; margin-bottom: 4px;
+}
+.exp-feat-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+/* ════════════════════════════════
+   TESTIMONIALS
+════════════════════════════════ */
+#testimonials {
+  background: #0e0b08;
+  text-align: center; overflow: hidden;
+}
+.testimonials-track-wrap { overflow: hidden; margin-top: 64px; }
+.testimonials-track {
+  display: flex; gap: 24px;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+.testimonials-track:hover { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.testi-card {
+  background: rgba(200,169,110,0.05);
+  border: 1px solid var(--border);
+  padding: 36px 32px; width: 360px; flex-shrink: 0;
+  text-align: left; position: relative;
+}
+.testi-stars { color: var(--sand); font-size: 0.9rem; margin-bottom: 16px; letter-spacing: 2px; }
+.testi-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 300;
+  line-height: 1.7; color: rgba(245,240,232,0.85);
+  margin-bottom: 20px; font-style: italic;
+}
+.testi-author { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.testi-villa { color: var(--sand); margin-left: 6px; }
+
+/* ════════════════════════════════
+   BOOKING SECTION
+════════════════════════════════ */
+#booking {
+  background: linear-gradient(180deg, #0e0b08 0%, var(--charcoal) 100%);
+  position: relative;
+}
+.booking-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; margin-top: 64px;
+}
+@media(max-width:800px) { .booking-grid { grid-template-columns:1fr; } }
+
+.booking-form-wrap {
+  background: rgba(200,169,110,0.04);
+  border: 1px solid var(--border);
+  padding: 40px;
+}
+.form-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 300; margin-bottom: 28px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block; font-size: 0.68rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+}
+.form-group input,
+.form-group select {
+  width: 100%; background: rgba(200,169,110,0.05);
+  border: 1px solid var(--border);
+  color: var(--cream); padding: 12px 16px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+  outline: none; transition: border-color 0.3s;
+  appearance: none;
+}
+.form-group input:focus,
+.form-group select:focus { border-color: var(--sand); }
+.form-group input::placeholder { color: rgba(245,240,232,0.25); }
+.form-group select option { background: #1a1612; }
+
+/* Payment */
+.payment-section { margin-top: 32px; position: relative; }
+.payment-title {
+  font-size: 0.68rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px; display: block;
+}
+.payment-methods {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.pay-method {
+  background: rgba(200,169,110,0.06);
+  border: 1px solid var(--border);
+  padding: 10px 18px;
+  font-size: 0.75rem; letter-spacing: 0.1em;
+  color: var(--muted); display: flex; align-items: center; gap: 8px;
+  transition: border-color 0.3s, color 0.3s;
+  cursor: none;
+}
+.pay-method.selected { border-color: var(--sand); color: var(--sand); }
+.pay-fields-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;
+}
+.payment-coming-overlay {
+  position: absolute; inset: -8px;
+  background: rgba(26,22,18,0.88);
+  backdrop-filter: blur(6px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px;
+  border: 1px dashed rgba(200,169,110,0.3);
+}
+.coming-badge {
+  background: var(--sand); color: var(--charcoal);
+  font-size: 0.65rem; letter-spacing: 0.3em;
+  text-transform: uppercase; padding: 6px 16px; font-weight: 600;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+@keyframes pulse-badge {
+  0%,100% { box-shadow: 0 0 0 0 rgba(200,169,110,0.4); }
+  50%      { box-shadow: 0 0 0 10px rgba(200,169,110,0); }
+}
+.coming-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 300;
+  color: rgba(245,240,232,0.6); text-align: center;
+  line-height: 1.5; max-width: 220px;
+}
+.form-submit {
+  width: 100%; background: var(--sand); color: var(--charcoal);
+  border: none; padding: 16px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: none; margin-top: 24px;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: 500;
+}
+.form-submit:hover { background: var(--sand-light); transform: translateY(-1px); }
+
+/* Booking Summary */
+.booking-summary { position: sticky; top: 100px; }
+.summary-card {
+  background: rgba(200,169,110,0.05);
+  border: 1px solid var(--border);
+  padding: 36px;
+}
+.summary-villa-img {
+  width: 100%; height: 180px; object-fit: cover; margin-bottom: 24px;
+}
+.summary-villa-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 300; margin-bottom: 4px;
+}
+.summary-loc {
+  font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 24px;
+}
+.summary-line {
+  display: flex; justify-content: space-between;
+  font-size: 0.85rem; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.summary-line:last-of-type { border-bottom: none; }
+.summary-label { color: var(--muted); }
+.summary-value { color: var(--cream); }
+.summary-total {
+  display: flex; justify-content: space-between;
+  padding: 20px 0 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+}
+.summary-total .summary-value { color: var(--sand); }
+.summary-note {
+  font-size: 0.7rem; color: var(--muted);
+  margin-top: 12px; line-height: 1.6;
+}
+
+/* ════════════════════════════════
+   FOOTER
+════════════════════════════════ */
+footer {
+  background: #0a0806;
+  border-top: 1px solid var(--border);
+  padding: 80px 6vw 40px;
+}
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px; margin-bottom: 60px;
+}
+@media(max-width:900px) { .footer-top { grid-template-columns:1fr 1fr; gap:40px; } }
+.footer-brand .nav-logo { font-size: 2rem; display: block; margin-bottom: 16px; }
+.footer-tagline {
+  font-size: 0.88rem; color: var(--muted);
+  line-height: 1.7; max-width: 260px;
+}
+.footer-col-title {
+  font-size: 0.68rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--sand);
+  margin-bottom: 20px;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 10px; }
+.footer-links a {
+  text-decoration: none; color: var(--muted);
+  font-size: 0.85rem; transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--cream); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  padding-top: 32px; border-top: 1px solid var(--border);
+}
+.footer-copy { font-size: 0.75rem; color: var(--muted); }
+.footer-socials { display: flex; gap: 20px; }
+.footer-socials a {
+  font-size: 0.7rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
+  text-decoration: none; transition: color 0.3s;
+}
+.footer-socials a:hover { color: var(--sand); }
+
+/* ════════════════════════════════
+   MODAL
+════════════════════════════════ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,8,6,0.9);
+  backdrop-filter: blur(8px); z-index: 1000;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--charcoal);
+  border: 1px solid var(--border);
+  max-width: 600px; width: 100%;
+  padding: 48px; position: relative;
+  animation: modal-in 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  max-height: 90vh; overflow-y: auto;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-close {
+  position: absolute; top: 20px; right: 20px;
+  background: none; border: none; color: var(--muted);
+  font-size: 1.4rem; cursor: none; transition: color 0.2s;
+}
+.modal-close:hover { color: var(--sand); }
+.modal-villa-img {
+  width: 100%; height: 200px; object-fit: cover; margin-bottom: 24px;
+}
+.modal-villa-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 300; margin-bottom: 4px;
+}
+.modal-loc {
+  font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+}
+.modal-desc {
+  font-size: 0.9rem; color: rgba(245,240,232,0.65);
+  line-height: 1.7; margin-bottom: 24px;
+}
+.modal-amenities {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 28px;
+}
+.modal-amenity {
+  font-size: 0.8rem; color: var(--muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-amenity::before { content: '✦'; color: var(--sand); font-size: 0.55rem; }
+.modal-price-row {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modal-price-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; color: var(--sand);
+}
+.modal-price-label {
+  font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em;
+}
+
+/* ════════════════════════════════
+   TOAST
+════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 32px; right: 32px;
+  background: var(--sand); color: var(--charcoal);
+  padding: 16px 24px; z-index: 5000;
+  font-size: 0.82rem; letter-spacing: 0.05em;
+  font-weight: 500;
+  transform: translateY(100px); opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ════════════════════════════════
+   VILLA BOOKING MODAL (full-screen)
+════════════════════════════════ */
+.vbm-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 2000;
+  animation: vbm-fadein 0.4s ease;
+}
+.vbm-overlay.open { display: flex; }
+@keyframes vbm-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Left — villa image panel */
+.vbm-left {
+  flex: 1.1; position: relative; overflow: hidden;
+}
+.vbm-bg-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.05);
+  animation: vbm-zoom 0.8s ease forwards;
+}
+@keyframes vbm-zoom {
+  to { transform: scale(1); }
+}
+.vbm-left-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, rgba(26,22,18,0.15) 0%, rgba(26,22,18,0.6) 100%),
+              linear-gradient(to top,   rgba(26,22,18,0.8) 0%, transparent 50%);
+}
+.vbm-left-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 48px;
+  animation: fade-up 0.6s 0.2s ease both;
+}
+.vbm-tag {
+  display: inline-block;
+  background: var(--sand); color: var(--charcoal);
+  font-size: 0.6rem; letter-spacing: 0.3em;
+  text-transform: uppercase; padding: 4px 12px;
+  font-weight: 600; margin-bottom: 14px;
+}
+.vbm-villa-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 300; line-height: 1;
+  color: var(--cream); margin-bottom: 6px;
+}
+.vbm-villa-loc {
+  font-size: 0.72rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(245,240,232,0.6);
+  margin-bottom: 20px;
+}
+.vbm-amenity-chips {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+}
+.vbm-chip {
+  background: rgba(245,240,232,0.1);
+  border: 1px solid rgba(245,240,232,0.2);
+  color: rgba(245,240,232,0.75);
+  font-size: 0.68rem; letter-spacing: 0.1em;
+  padding: 5px 12px;
+}
+.vbm-price-badge {
+  display: inline-flex; align-items: baseline; gap: 6px;
+}
+.vbm-price-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem; font-weight: 300;
+  color: var(--sand); line-height: 1;
+}
+.vbm-price-lbl {
+  font-size: 0.7rem; color: rgba(245,240,232,0.5);
+  letter-spacing: 0.1em;
+}
+
+/* Right — form panel */
+.vbm-right {
+  width: 480px; flex-shrink: 0;
+  background: var(--charcoal);
+  overflow-y: auto;
+  position: relative;
+  border-left: 1px solid var(--border);
+}
+.vbm-close {
+  position: absolute; top: 20px; right: 20px;
+  background: none; border: none; color: var(--muted);
+  font-size: 1.3rem; cursor: none; transition: color 0.2s;
+  z-index: 10; line-height: 1;
+}
+.vbm-close:hover { color: var(--sand); }
+.vbm-form-inner {
+  padding: 52px 40px 48px;
+  animation: fade-up 0.5s 0.15s ease both;
+}
+.vbm-eyebrow {
+  font-size: 0.65rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--sand);
+  margin-bottom: 8px; display: block;
+}
+.vbm-form-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 300;
+  margin-bottom: 28px; line-height: 1.1;
+}
+.vbm-form-title em { font-style: italic; color: var(--sand); }
+
+/* Steps */
+.vbm-steps {
+  display: flex; align-items: center; margin-bottom: 32px; gap: 0;
+}
+.vbm-step {
+  font-size: 0.68rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+  transition: color 0.3s; white-space: nowrap;
+}
+.vbm-step span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; color: inherit;
+}
+.vbm-step.active { color: var(--sand); }
+.vbm-step.done   { color: rgba(200,169,110,0.5); }
+.vbm-step-line {
+  flex: 1; height: 1px;
+  background: var(--border); margin: 0 12px;
+}
+
+/* Form fields */
+.vbm-pane { display: block; }
+.vbm-pane.hidden { display: none; }
+.vbf-group { margin-bottom: 18px; }
+.vbf-group label {
+  display: block; font-size: 0.65rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 7px;
+}
+.vbf-group input,
+.vbf-group select {
+  width: 100%; background: rgba(200,169,110,0.05);
+  border: 1px solid var(--border);
+  color: var(--cream); padding: 11px 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+  outline: none; transition: border-color 0.3s;
+  appearance: none;
+}
+.vbf-group input:focus,
+.vbf-group select:focus { border-color: var(--sand); }
+.vbf-group input::placeholder { color: rgba(245,240,232,0.22); }
+.vbf-group select option { background: #1a1612; }
+.vbm-date-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.vbm-two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+
+/* Calc box */
+.vbm-calc {
+  background: rgba(200,169,110,0.06);
+  border: 1px solid var(--border);
+  padding: 16px 20px; margin: 18px 0;
+}
+.vbm-calc-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.82rem; padding: 6px 0;
+  border-bottom: 1px solid rgba(200,169,110,0.1);
+  color: var(--muted);
+}
+.vbm-calc-row:last-child { border-bottom: none; }
+.vbm-calc-row.total {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; color: var(--sand);
+  padding-top: 10px; margin-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+/* Buttons */
+.vbm-btn-next {
+  width: 100%; background: var(--sand); color: var(--charcoal);
+  border: none; padding: 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: none; margin-top: 8px;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: 500;
+}
+.vbm-btn-next:hover { background: var(--sand-light); transform: translateY(-1px); }
+.vbm-btn-row { display: flex; gap: 12px; margin-top: 8px; }
+.vbm-btn-back {
+  flex: 1; background: transparent;
+  border: 1px solid var(--border); color: var(--muted);
+  padding: 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: none; transition: border-color 0.3s, color 0.3s;
+}
+.vbm-btn-back:hover { border-color: var(--sand); color: var(--sand); }
+.vbm-btn-confirm {
+  flex: 2; background: var(--sand); color: var(--charcoal);
+  border: none; padding: 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: none; transition: background 0.3s;
+  font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.vbm-btn-confirm:hover { background: var(--sand-light); }
+.vbm-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(26,22,18,0.3);
+  border-top-color: var(--charcoal);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hidden { display: none !important; }
+
+/* Review card */
+.vbm-review-card {
+  background: rgba(200,169,110,0.05);
+  border: 1px solid var(--border);
+  padding: 20px; margin-bottom: 16px;
+}
+.vbm-review-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.82rem; padding: 8px 0;
+  border-bottom: 1px solid rgba(200,169,110,0.08);
+}
+.vbm-review-row:last-child { border-bottom: none; }
+.vbm-review-row span { color: var(--muted); }
+.vbm-review-row strong { color: var(--cream); font-weight: 400; text-align: right; max-width: 60%; }
+.vbm-review-row.highlight strong { color: var(--sand); font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; }
+.vbm-note {
+  font-size: 0.72rem; color: var(--muted); line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+/* Success state */
+.vbm-success {
+  text-align: center; padding: 20px 0;
+}
+.vbm-success-icon {
+  font-size: 2.5rem; color: var(--sand);
+  margin-bottom: 20px;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+.vbm-success-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 300; margin-bottom: 12px;
+}
+.vbm-success-msg {
+  font-size: 0.88rem; color: rgba(245,240,232,0.6);
+  line-height: 1.7; max-width: 320px; margin: 0 auto;
+}
+.vbm-success-msg strong { color: var(--sand); }
+
+/* Mobile */
+@media(max-width: 768px) {
+  .vbm-overlay { flex-direction: column; }
+  .vbm-left { height: 40vh; flex: none; }
+  .vbm-left-content { padding: 24px; }
+  .vbm-right { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+  .vbm-form-inner { padding: 32px 24px; }
+  .vbm-date-grid, .vbm-two-col { grid-template-columns: 1fr; }
+}
+
+/* ════════════════════════════════
+   PAYMENT STEP STYLES
+════════════════════════════════ */
+.vbm-deposit-box {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(200,169,110,0.08);
+  border: 1px solid var(--sand);
+  padding: 16px 20px; margin-bottom: 20px;
+}
+.vbm-deposit-label {
+  font-size: 0.72rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
+}
+.vbm-deposit-amt {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; color: var(--sand); font-weight: 300;
+}
+.vbm-pay-tabs {
+  display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.vbm-pay-tab {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted); padding: 8px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.1em;
+  cursor: none; transition: all 0.3s;
+}
+.vbm-pay-tab.active {
+  border-color: var(--sand); color: var(--sand);
+  background: rgba(200,169,110,0.06);
+}
+.vbm-pay-tab:hover { border-color: var(--sand); color: var(--sand); }
+.vbm-upi-note {
+  background: rgba(200,169,110,0.05);
+  border: 1px solid var(--border);
+  padding: 14px 16px; margin-top: 8px;
+}
+.vbm-upi-note p {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.6;
+}
+.vbm-bank-details {
+  background: rgba(200,169,110,0.04);
+  border: 1px solid var(--border);
+  padding: 16px;
+}
+.vbm-bank-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 0; font-size: 0.82rem;
+  border-bottom: 1px solid rgba(200,169,110,0.08);
+}
+.vbm-bank-row:last-child { border-bottom: none; }
+.vbm-bank-row span { color: var(--muted); }
+.vbm-bank-row strong { color: var(--cream); font-weight: 500; }
+.vbm-pay-coming {
+  background: rgba(200,169,110,0.04);
+  border: 1px dashed rgba(200,169,110,0.3);
+  padding: 16px; text-align: center; margin: 16px 0 0;
+}
+.vbm-pay-coming-badge {
+  display: inline-block;
+  background: var(--sand); color: var(--charcoal);
+  font-size: 0.65rem; letter-spacing: 0.25em;
+  text-transform: uppercase; padding: 4px 14px;
+  font-weight: 700; margin-bottom: 10px;
+}
+.vbm-pay-coming p {
+  font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════
+       CUSTOM CURSOR
+  ═══════════════════════ -->
+  <div class="cursor"      id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ═══════════════════════
+       LOADER
+  ═══════════════════════ -->
+  <div id="loader">
+    <div class="loader-wordmark">book<span>my</span>villa</div>
+    <div class="loader-bar"></div>
+  </div>
+
+  <!-- ═══════════════════════
+       NAVIGATION
+  ═══════════════════════ -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">book<em>my</em>villa</a>
+    <ul class="nav-links">
+      <li><a href="#villas">Villas</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#booking" class="nav-cta">Book Now</a></li>
+    </ul>
+  </nav>
+
+  <!-- ═══════════════════════
+       HERO
+  ═══════════════════════ -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="hero-img"></div>
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Private luxury villas · India's finest</p>
+      <h1 class="hero-title">Where luxury<br><em>meets</em> solitude</h1>
+      <p class="hero-sub">Three exceptional private villas handpicked for the discerning traveller. Uncompromising comfort, unmatched privacy.</p>
+      <div class="hero-actions">
+        <a href="#villas"  class="btn-primary">Explore Villas</a>
+        <a href="#booking" class="btn-ghost">Reserve Now</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════
+       STATS BAR
+  ═══════════════════════ -->
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-num" data-count="3">0</span><span class="stat-label">Exclusive Villas</span></div>
+    <div class="stat"><span class="stat-num" data-count="500">0</span><span class="stat-label">Happy Guests</span></div>
+    <div class="stat"><span class="stat-num" data-count="98">0</span><span class="stat-label">% Satisfaction</span></div>
+    <div class="stat"><span class="stat-num" data-count="24">0</span><span class="stat-label">Hr Concierge</span></div>
+  </div>
+
+  <!-- ═══════════════════════
+       VILLAS
+  ═══════════════════════ -->
+  <section id="villas">
+    <div class="villas-header reveal">
+      <div>
+        <span class="section-eyebrow">Our Collection</span>
+        <h2 class="section-title">Three <em>extraordinary</em><br>escapes</h2>
+      </div>
+      <p class="section-desc">Each villa is a world unto itself — curated with rare materials, private pools, and landscapes that silence the noise of ordinary life.</p>
+    </div>
+
+    <div class="villas-grid">
+
+      <!-- Villa 1 — large featured card -->
+      <div class="villa-card reveal" data-villa="0">
+        <img class="villa-img"
+          src="https://images.unsplash.com/photo-1613977257363-707ba9348227?w=900&q=80"
+          alt="Villa Aravali">
+        <div class="villa-overlay">
+          <div class="villa-tag">Featured</div>
+          <div class="villa-rating">★ 4.98</div>
+          <div>
+            <h3 class="villa-name">Villa Aravali</h3>
+            <p class="villa-location">📍 Udaipur, Rajasthan</p>
+            <div class="villa-meta">
+              <span>🛏 5 Bedrooms</span>
+              <span>🚿 5 Baths</span>
+              <span>👥 12 Guests</span>
+              <span>🏊 Infinity Pool</span>
+            </div>
+            <div class="villa-price-row">
+              <div class="villa-price">₹42,000 <small>/ night</small></div>
+              <button class="villa-book-btn" onclick="openVbm(0)">View & Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Villa 2 -->
+      <div class="villa-card reveal" data-villa="1" style="transition-delay:0.15s">
+        <img class="villa-img"
+          src="https://images.unsplash.com/photo-1570737209810-87a8e7245f88?w=800&q=80"
+          alt="Villa Konkan">
+        <div class="villa-overlay">
+          <div class="villa-tag">Beachfront</div>
+          <div class="villa-rating">★ 4.95</div>
+          <div>
+            <h3 class="villa-name">Villa Konkan</h3>
+            <p class="villa-location">📍 Alibaug, Maharashtra</p>
+            <div class="villa-meta">
+              <span>🛏 4 Bedrooms</span>
+              <span>🚿 4 Baths</span>
+              <span>👥 8 Guests</span>
+            </div>
+            <div class="villa-price-row">
+              <div class="villa-price">₹28,000 <small>/ night</small></div>
+              <button class="villa-book-btn" onclick="openVbm(1)">View & Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Villa 3 -->
+      <div class="villa-card reveal" data-villa="2" style="transition-delay:0.3s">
+        <img class="villa-img"
+          src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80"
+          alt="Villa Nilgiri">
+        <div class="villa-overlay">
+          <div class="villa-tag">Hilltop</div>
+          <div class="villa-rating">★ 4.97</div>
+          <div>
+            <h3 class="villa-name">Villa Nilgiri</h3>
+            <p class="villa-location">📍 Ooty, Tamil Nadu</p>
+            <div class="villa-meta">
+              <span>🛏 3 Bedrooms</span>
+              <span>🚿 3 Baths</span>
+              <span>👥 6 Guests</span>
+            </div>
+            <div class="villa-price-row">
+              <div class="villa-price">₹18,000 <small>/ night</small></div>
+              <button class="villa-book-btn" onclick="openVbm(2)">View & Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════
+       GALLERY STRIP
+  ═══════════════════════ -->
+  <div class="gallery-strip">
+    <div class="gallery-track">
+      <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=75" alt="Luxury pool">
+      <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500&q=75" alt="Villa terrace">
+      <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=500&q=75" alt="Scenic view">
+      <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=500&q=75" alt="Private beach">
+      <img src="https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=500&q=75" alt="Villa interior">
+      <img src="https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?w=500&q=75" alt="Garden view">
+      <!-- Duplicate set for seamless infinite loop -->
+      <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&q=75" alt="Luxury pool">
+      <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500&q=75" alt="Villa terrace">
+      <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=500&q=75" alt="Scenic view">
+      <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=500&q=75" alt="Private beach">
+      <img src="https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=500&q=75" alt="Villa interior">
+      <img src="https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?w=500&q=75" alt="Garden view">
+    </div>
+  </div>
+
+  <!-- ═══════════════════════
+       EXPERIENCE
+  ═══════════════════════ -->
+  <section id="experience">
+    <div class="exp-grid">
+      <!-- Visual collage -->
+      <div class="exp-visual reveal">
+        <img class="exp-img-main"
+          src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=700&q=80"
+          alt="Villa experience">
+        <img class="exp-img-accent"
+          src="https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?w=400&q=80"
+          alt="Garden detail">
+        <div class="exp-badge">
+          <div class="exp-badge-inner">
+            <span class="num">10+</span>
+            <span class="lbl">Years of<br>Luxury</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text + features -->
+      <div class="reveal" style="transition-delay:0.2s">
+        <span class="section-eyebrow">The BookMyVilla Way</span>
+        <h2 class="section-title">Beyond a <em>stay</em> —<br>an experience</h2>
+        <div class="divider"></div>
+        <p class="section-desc">Every visit is curated from arrival to departure. We don't just offer beds — we craft memories that outlast the journey.</p>
+        <div class="exp-features">
+          <div class="exp-feature">
+            <div class="exp-icon">🍽</div>
+            <div class="exp-feat-title">Private Chef</div>
+            <div class="exp-feat-desc">In-house chef with curated menus on request.</div>
+          </div>
+          <div class="exp-feature">
+            <div class="exp-icon">🚗</div>
+            <div class="exp-feat-title">Chauffeur Service</div>
+            <div class="exp-feat-desc">Airport transfers and local excursions included.</div>
+          </div>
+          <div class="exp-feature">
+            <div class="exp-icon">💆</div>
+            <div class="exp-feat-title">Spa & Wellness</div>
+            <div class="exp-feat-desc">In-villa treatments by certified therapists.</div>
+          </div>
+          <div class="exp-feature">
+            <div class="exp-icon">🔒</div>
+            <div class="exp-feat-title">Complete Privacy</div>
+            <div class="exp-feat-desc">Gated, exclusive, no shared spaces.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════
+       TESTIMONIALS
+  ═══════════════════════ -->
+  <section id="testimonials">
+    <span class="section-eyebrow">Guest Stories</span>
+    <h2 class="section-title">Words from our <em>guests</em></h2>
+
+    <div class="testimonials-track-wrap">
+      <div class="testimonials-track">
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Villa Aravali redefined luxury for us. The views, the silence, the impeccable service — we never wanted to leave."</p>
+          <p class="testi-author">Riya & Arjun Mehta<span class="testi-villa">— Villa Aravali</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"The Konkan coast has never felt more intimate. Waking up to the sound of waves in a villa this stunning is priceless."</p>
+          <p class="testi-author">Priya Nair<span class="testi-villa">— Villa Konkan</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Villa Nilgiri is a masterpiece nestled in the mist. The private chef prepared dishes that rivalled any 5-star restaurant."</p>
+          <p class="testi-author">Karthik & Deepa<span class="testi-villa">— Villa Nilgiri</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Booking was seamless, the team was flawless. This is the gold standard for private villa experiences in India."</p>
+          <p class="testi-author">Sameer Kapoor<span class="testi-villa">— Villa Aravali</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"We celebrated our anniversary at Villa Konkan. The team arranged a surprise beach dinner — absolutely magical."</p>
+          <p class="testi-author">Ananya & Dev<span class="testi-villa">— Villa Konkan</span></p>
+        </div>
+        <!-- Duplicate for infinite loop -->
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Villa Aravali redefined luxury for us. The views, the silence, the impeccable service — we never wanted to leave."</p>
+          <p class="testi-author">Riya & Arjun Mehta<span class="testi-villa">— Villa Aravali</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"The Konkan coast has never felt more intimate. Waking up to the sound of waves in a villa this stunning is priceless."</p>
+          <p class="testi-author">Priya Nair<span class="testi-villa">— Villa Konkan</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Villa Nilgiri is a masterpiece nestled in the mist. The private chef prepared dishes that rivalled any 5-star restaurant."</p>
+          <p class="testi-author">Karthik & Deepa<span class="testi-villa">— Villa Nilgiri</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Booking was seamless, the team was flawless. This is the gold standard for private villa experiences in India."</p>
+          <p class="testi-author">Sameer Kapoor<span class="testi-villa">— Villa Aravali</span></p>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"We celebrated our anniversary at Villa Konkan. The team arranged a surprise beach dinner — absolutely magical."</p>
+          <p class="testi-author">Ananya & Dev<span class="testi-villa">— Villa Konkan</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- booking section removed — booking now happens via villa card modal -->
+
+  <!-- ═══════════════════════
+       FOOTER
+  ═══════════════════════ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">book<em>my</em>villa</a>
+        <p class="footer-tagline">India's most exclusive private villa collection. Where every stay becomes a legend.</p>
+      </div>
+      <div>
+        <p class="footer-col-title">Villas</p>
+        <ul class="footer-links">
+          <li><a href="#" onclick="openVbm(0)">Villa Aravali</a></li>
+          <li><a href="#" onclick="openVbm(1)">Villa Konkan</a></li>
+          <li><a href="#" onclick="openVbm(2)">Villa Nilgiri</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Company</p>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Experiences</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Contact</p>
+        <ul class="footer-links">
+          <li><a href="#">+91 98000 12345</a></li>
+          <li><a href="#">hello@bookmyvilla.in</a></li>
+          <li><a href="#">Mumbai, India</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 BookMyVilla. All rights reserved.</p>
+      <div class="footer-socials">
+        <a href="#">Instagram</a>
+        <a href="#">WhatsApp</a>
+        <a href="#">Facebook</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════
+       VILLA BOOKING MODAL (full-screen immersive)
+  ═══════════════════════════════════════════ -->
+  <div class="vbm-overlay" id="vbmOverlay">
+
+    <!-- Left panel: villa showcase -->
+    <div class="vbm-left" id="vbmLeft">
+      <img class="vbm-bg-img" id="vbmBgImg" src="" alt="">
+      <div class="vbm-left-overlay"></div>
+      <div class="vbm-left-content">
+        <div class="vbm-tag" id="vbmTag"></div>
+        <h2 class="vbm-villa-name" id="vbmVillaName"></h2>
+        <p class="vbm-villa-loc"   id="vbmVillaLoc"></p>
+        <div class="vbm-amenity-chips" id="vbmChips"></div>
+        <div class="vbm-price-badge">
+          <span class="vbm-price-num" id="vbmPriceNum"></span>
+          <span class="vbm-price-lbl">per night</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel: booking form -->
+    <div class="vbm-right">
+      <button class="vbm-close" id="vbmClose">✕</button>
+
+      <div class="vbm-form-inner">
+        <p class="vbm-eyebrow">Reserve your stay</p>
+        <h3 class="vbm-form-title">Book <em id="vbmFormVillaName"></em></h3>
+
+        <!-- Step indicator -->
+        <div class="vbm-steps">
+          <div class="vbm-step active" data-step="1"><span>01</span> Dates</div>
+          <div class="vbm-step-line"></div>
+          <div class="vbm-step" data-step="2"><span>02</span> Details</div>
+          <div class="vbm-step-line"></div>
+          <div class="vbm-step" data-step="3"><span>03</span> Payment</div>
+          <div class="vbm-step-line"></div>
+          <div class="vbm-step" data-step="4"><span>04</span> Confirm</div>
+        </div>
+
+        <!-- ── STEP 1: Dates ── -->
+        <div class="vbm-pane" id="vbmPane1">
+          <div class="vbm-date-grid">
+            <div class="vbf-group">
+              <label>Check-in</label>
+              <input type="date" id="vbmCheckin" onchange="vbmUpdateCalc()">
+            </div>
+            <div class="vbf-group">
+              <label>Check-out</label>
+              <input type="date" id="vbmCheckout" onchange="vbmUpdateCalc()">
+            </div>
+          </div>
+          <div class="vbf-group">
+            <label>Guests</label>
+            <select id="vbmGuests">
+              <option>1–2 Guests</option>
+              <option>3–4 Guests</option>
+              <option>5–6 Guests</option>
+              <option>7–12 Guests</option>
+            </select>
+          </div>
+          <div class="vbm-calc" id="vbmCalc">
+            <div class="vbm-calc-row"><span>Nights</span><span id="vbmCalcNights">—</span></div>
+            <div class="vbm-calc-row"><span>Rate / night</span><span id="vbmCalcRate">—</span></div>
+            <div class="vbm-calc-row total"><span>Total</span><span id="vbmCalcTotal">—</span></div>
+          </div>
+          <button class="vbm-btn-next" onclick="vbmGoStep(2)">Continue →</button>
+        </div>
+
+        <!-- ── STEP 2: Guest Details ── -->
+        <div class="vbm-pane hidden" id="vbmPane2">
+          <div class="vbm-two-col">
+            <div class="vbf-group">
+              <label>First Name</label>
+              <input type="text" id="vbmFname" placeholder="Arjun">
+            </div>
+            <div class="vbf-group">
+              <label>Last Name</label>
+              <input type="text" id="vbmLname" placeholder="Sharma">
+            </div>
+          </div>
+          <div class="vbf-group">
+            <label>Email</label>
+            <input type="email" id="vbmEmail" placeholder="you@example.com">
+          </div>
+          <div class="vbf-group">
+            <label>Phone</label>
+            <input type="tel" id="vbmPhone" placeholder="+91 98765 43210">
+          </div>
+          <div class="vbf-group">
+            <label>Special Requests <span style="color:var(--muted);font-size:0.75em">(optional)</span></label>
+            <input type="text" id="vbmRequests" placeholder="Anniversary setup, dietary needs...">
+          </div>
+          <div class="vbm-btn-row">
+            <button class="vbm-btn-back" onclick="vbmGoStep(1)">← Back</button>
+            <button class="vbm-btn-next" onclick="vbmGoStep(3)">Payment →</button>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: Payment ── -->
+        <div class="vbm-pane hidden" id="vbmPane3">
+          <p class="vbm-note" style="margin-bottom:20px;">✦ 30% advance deposit to confirm your reservation. Balance due at check-in.</p>
+
+          <!-- Deposit amount display -->
+          <div class="vbm-deposit-box">
+            <span class="vbm-deposit-label">Deposit Due Now (30%)</span>
+            <span class="vbm-deposit-amt" id="vbmDepositAmt">—</span>
+          </div>
+
+          <!-- Payment method tabs -->
+          <div class="vbm-pay-tabs">
+            <button class="vbm-pay-tab active" onclick="vbmSelectPayTab(this,'card')">💳 Card</button>
+            <button class="vbm-pay-tab" onclick="vbmSelectPayTab(this,'upi')">📱 UPI</button>
+            <button class="vbm-pay-tab" onclick="vbmSelectPayTab(this,'bank')">🏦 Bank Transfer</button>
+          </div>
+
+          <!-- Card fields -->
+          <div id="vbmPayCard">
+            <div class="vbf-group">
+              <label>Card Number</label>
+              <input type="text" id="vbmCardNum" placeholder="•••• •••• •••• ••••" maxlength="19" oninput="vbmFormatCard(this)">
+            </div>
+            <div class="vbm-two-col">
+              <div class="vbf-group">
+                <label>Expiry</label>
+                <input type="text" id="vbmExpiry" placeholder="MM / YY" maxlength="7" oninput="vbmFormatExpiry(this)">
+              </div>
+              <div class="vbf-group">
+                <label>CVV</label>
+                <input type="text" id="vbmCvv" placeholder="•••" maxlength="3">
+              </div>
+            </div>
+            <div class="vbf-group">
+              <label>Cardholder Name</label>
+              <input type="text" id="vbmCardName" placeholder="As on card">
+            </div>
+          </div>
+
+          <!-- UPI fields -->
+          <div id="vbmPayUpi" class="hidden">
+            <div class="vbf-group">
+              <label>UPI ID</label>
+              <input type="text" id="vbmUpiId" placeholder="yourname@upi">
+            </div>
+            <div class="vbm-upi-note">
+              <p>Enter your UPI ID and click Pay. A payment request will be sent to your UPI app.</p>
+            </div>
+          </div>
+
+          <!-- Bank Transfer fields -->
+          <div id="vbmPayBank" class="hidden">
+            <div class="vbm-bank-details">
+              <div class="vbm-bank-row"><span>Account Name</span><strong>BookMyVilla Pvt Ltd</strong></div>
+              <div class="vbm-bank-row"><span>Account No.</span><strong>1234 5678 9012</strong></div>
+              <div class="vbm-bank-row"><span>IFSC Code</span><strong>HDFC0001234</strong></div>
+              <div class="vbm-bank-row"><span>Bank</span><strong>HDFC Bank, Mumbai</strong></div>
+            </div>
+            <p class="vbm-note" style="margin-top:12px;">After transfer, click confirm and we'll verify within 2 hours.</p>
+          </div>
+
+          <!-- Coming Soon overlay -->
+          <div class="vbm-pay-coming">
+            <div class="vbm-pay-coming-badge">🔒 Coming Soon</div>
+            <p>Live payment gateway is being set up.<br>Confirm your booking now — we'll collect deposit via bank transfer.</p>
+          </div>
+
+          <div class="vbm-btn-row" style="margin-top:20px;">
+            <button class="vbm-btn-back" onclick="vbmGoStep(2)">← Back</button>
+            <button class="vbm-btn-next" onclick="vbmGoStep(4)">Review & Confirm →</button>
+          </div>
+        </div>
+
+        <!-- ── STEP 4: Review & Confirm ── -->
+        <div class="vbm-pane hidden" id="vbmPane4">
+          <div class="vbm-review-card">
+            <div class="vbm-review-row"><span>Villa</span><strong id="rvVilla"></strong></div>
+            <div class="vbm-review-row"><span>Check-in</span><strong id="rvCI"></strong></div>
+            <div class="vbm-review-row"><span>Check-out</span><strong id="rvCO"></strong></div>
+            <div class="vbm-review-row"><span>Nights</span><strong id="rvNights"></strong></div>
+            <div class="vbm-review-row"><span>Guests</span><strong id="rvGuests"></strong></div>
+            <div class="vbm-review-row"><span>Name</span><strong id="rvName"></strong></div>
+            <div class="vbm-review-row"><span>Email</span><strong id="rvEmail"></strong></div>
+            <div class="vbm-review-row"><span>Phone</span><strong id="rvPhone"></strong></div>
+            <div class="vbm-review-row highlight"><span>Total</span><strong id="rvTotal"></strong></div>
+          </div>
+          <p class="vbm-note">✦ 30% deposit required · ✦ Free cancellation 7 days prior</p>
+          <div class="vbm-btn-row">
+            <button class="vbm-btn-back" onclick="vbmGoStep(3)">← Back</button>
+            <button class="vbm-btn-confirm" id="vbmConfirmBtn" onclick="vbmConfirm()">
+              <span id="vbmConfirmTxt">Confirm Reservation</span>
+              <span id="vbmConfirmLoader" class="vbm-spinner hidden"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ── STEP 5: Success ── -->
+        <div class="vbm-pane hidden" id="vbmPane5">
+          <div class="vbm-success">
+            <div class="vbm-success-icon">✦</div>
+            <h3 class="vbm-success-title">Reservation Requested!</h3>
+            <p class="vbm-success-msg">Thank you, <span id="vbmSuccessName"></span>. Our team will confirm your booking at <strong id="vbmSuccessEmail"></strong> within 2 hours.</p>
+            <button class="vbm-btn-next" onclick="closeVbm()" style="margin-top:24px">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════
+       TOAST NOTIFICATION
+  ═══════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <!-- JavaScript — loaded at end of body -->
+  <script>
+/* ═══════════════════════════════════════
+   BOOKMYVILLA — main.js
+   ═══════════════════════════════════════ */
+
+/* ════════════════════════════════
+   EMAILJS CONFIG
+   Replace these 3 values with your real keys from emailjs.com
+   Template needs only TWO variables: {{subject}} and {{message}}
+   Set "To Email" = neelgadekar9@gmail.com in the template
+════════════════════════════════ */
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+const ADMIN_EMAIL         = 'neelgadekar9@gmail.com';
+
+/* ════════════════════════════════
+   VILLA DATA
+════════════════════════════════ */
+const villas = [
+  {
+    name: 'Villa Aravali', tag: 'Featured',
+    location: 'Udaipur, Rajasthan',
+    img: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200&q=85',
+    price: 42000, priceStr: '₹42,000',
+    amenities: ['Infinity Pool','Rooftop Terrace','Private Chef','Jacuzzi','Home Theatre','Butler Service','Airport Transfer','Yoga Pavilion']
+  },
+  {
+    name: 'Villa Konkan', tag: 'Beachfront',
+    location: 'Alibaug, Maharashtra',
+    img: 'https://images.unsplash.com/photo-1570737209810-87a8e7245f88?w=1200&q=85',
+    price: 28000, priceStr: '₹28,000',
+    amenities: ['Private Beach','Seawater Pool','Beach Bar','Water Sports','Private Chef','Open-air Dining','Airport Speedboat','Bonfire Nights']
+  },
+  {
+    name: 'Villa Nilgiri', tag: 'Hilltop',
+    location: 'Ooty, Tamil Nadu',
+    img: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=85',
+    price: 18000, priceStr: '₹18,000',
+    amenities: ['Log Fireplace','Tea Estate Views','Colonial Gardens','Verandah Dining','Private Chef','Nature Walks','Hammock Garden','Library Lounge']
+  }
+];
+
+let vbmCurrentVilla = 0;
+let vbmCurrentStep  = 1;
+
+/* ════════════════════════════════
+   CURSOR
+════════════════════════════════ */
+function initCursor() {
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+    setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 80);
+  });
+}
+
+/* ════════════════════════════════
+   LOADER
+════════════════════════════════ */
+function initLoader() {
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loader').classList.add('hide'), 2000);
+  });
+}
+
+/* ════════════════════════════════
+   NAV
+════════════════════════════════ */
+function initNav() {
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+}
+
+/* ════════════════════════════════
+   SCROLL REVEAL
+════════════════════════════════ */
+function initReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+/* ════════════════════════════════
+   COUNT-UP
+════════════════════════════════ */
+function initCountUp() {
+  const countObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target, target = +el.dataset.count;
+      let cur = 0;
+      const step = Math.ceil(target / 50);
+      const t = setInterval(() => {
+        cur = Math.min(cur + step, target);
+        el.textContent = cur + (el.dataset.suffix || '');
+        if (cur >= target) clearInterval(t);
+      }, 30);
+      countObs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-num').forEach(el => countObs.observe(el));
+}
+
+/* ════════════════════════════════
+   OPEN BOOKING MODAL
+════════════════════════════════ */
+function openVbm(idx) {
+  if (event) event.preventDefault();
+  vbmCurrentVilla = idx;
+  vbmCurrentStep  = 1;
+  const v = villas[idx];
+
+  document.getElementById('vbmBgImg').src                = v.img;
+  document.getElementById('vbmTag').textContent           = v.tag;
+  document.getElementById('vbmVillaName').textContent     = v.name;
+  document.getElementById('vbmVillaLoc').textContent      = '📍 ' + v.location;
+  document.getElementById('vbmPriceNum').textContent      = v.priceStr;
+  document.getElementById('vbmFormVillaName').textContent = v.name;
+  document.getElementById('vbmChips').innerHTML =
+    v.amenities.slice(0, 5).map(a => `<span class="vbm-chip">${a}</span>`).join('');
+
+  vbmShowPane(1);
+  vbmResetSteps();
+
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter  = new Date(); dayAfter.setDate(dayAfter.getDate() + 4);
+  document.getElementById('vbmCheckin').value  = tomorrow.toISOString().split('T')[0];
+  document.getElementById('vbmCheckout').value = dayAfter.toISOString().split('T')[0];
+  vbmUpdateCalc();
+
+  document.getElementById('vbmOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVbm() {
+  document.getElementById('vbmOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ════════════════════════════════
+   STEP NAV
+════════════════════════════════ */
+function vbmGoStep(step) {
+  /* Validate step 1 */
+  if (step === 2 && vbmNights() <= 0)
+    return vbmShake(document.getElementById('vbmPane1'));
+
+  /* Validate step 2 */
+  if (step === 3) {
+    const fname = document.getElementById('vbmFname').value.trim();
+    const email = document.getElementById('vbmEmail').value.trim();
+    const phone = document.getElementById('vbmPhone').value.trim();
+    if (!fname || !email || !phone)
+      return vbmShake(document.getElementById('vbmPane2'));
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return vbmShake(document.getElementById('vbmPane2'));
+    /* update deposit amount */
+    const nights = vbmNights();
+    const v = villas[vbmCurrentVilla];
+    const deposit = Math.round(nights * v.price * 0.3);
+    document.getElementById('vbmDepositAmt').textContent = '₹' + deposit.toLocaleString('en-IN');
+  }
+
+  /* Validate step 3 → populate review */
+  if (step === 4) vbmPopulateReview();
+
+  vbmCurrentStep = step;
+  vbmShowPane(step);
+  vbmResetSteps();
+}
+
+function vbmShowPane(step) {
+  [1,2,3,4,5].forEach(n => {
+    const el = document.getElementById('vbmPane' + n);
+    if (el) el.classList.toggle('hidden', n !== step);
+  });
+  document.querySelector('.vbm-right').scrollTop = 0;
+}
+
+function vbmResetSteps() {
+  document.querySelectorAll('.vbm-step').forEach(el => {
+    const s = +el.dataset.step;
+    el.classList.toggle('active', s === vbmCurrentStep);
+    el.classList.toggle('done',   s < vbmCurrentStep);
+  });
+}
+
+function vbmShake(el) {
+  el.style.animation = 'none'; el.offsetHeight;
+  el.style.animation = 'shake 0.4s ease';
+  setTimeout(() => { el.style.animation = ''; }, 500);
+}
+
+/* ════════════════════════════════
+   PAYMENT TABS
+════════════════════════════════ */
+function vbmSelectPayTab(btn, type) {
+  document.querySelectorAll('.vbm-pay-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['card','upi','bank'].forEach(t => {
+    const el = document.getElementById('vbmPay' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (el) el.classList.toggle('hidden', t !== type);
+  });
+}
+
+/* Card number formatter */
+function vbmFormatCard(input) {
+  let v = input.value.replace(/\D/g,'').substring(0,16);
+  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+
+/* Expiry formatter */
+function vbmFormatExpiry(input) {
+  let v = input.value.replace(/\D/g,'').substring(0,4);
+  if (v.length >= 2) v = v.substring(0,2) + ' / ' + v.substring(2);
+  input.value = v;
+}
+
+/* ════════════════════════════════
+   PRICE CALC
+════════════════════════════════ */
+function vbmNights() {
+  const ci = document.getElementById('vbmCheckin').value;
+  const co = document.getElementById('vbmCheckout').value;
+  if (!ci || !co) return 0;
+  return Math.max(0, Math.round((new Date(co) - new Date(ci)) / 86400000));
+}
+
+function vbmUpdateCalc() {
+  const nights = vbmNights();
+  const v = villas[vbmCurrentVilla];
+  document.getElementById('vbmCalcNights').textContent = nights > 0 ? nights + (nights===1?' night':' nights') : '—';
+  document.getElementById('vbmCalcRate').textContent   = v.priceStr;
+  document.getElementById('vbmCalcTotal').textContent  = nights > 0 ? '₹' + (nights * v.price).toLocaleString('en-IN') : '—';
+}
+
+/* ════════════════════════════════
+   REVIEW POPULATE
+════════════════════════════════ */
+function vbmPopulateReview() {
+  const v = villas[vbmCurrentVilla], nights = vbmNights();
+  const ci = document.getElementById('vbmCheckin').value;
+  const co = document.getElementById('vbmCheckout').value;
+  const fmt = { day:'numeric', month:'short', year:'numeric' };
+  const fname = document.getElementById('vbmFname').value.trim();
+  const lname = document.getElementById('vbmLname').value.trim();
+
+  document.getElementById('rvVilla').textContent   = v.name;
+  document.getElementById('rvCI').textContent      = new Date(ci).toLocaleDateString('en-IN', fmt);
+  document.getElementById('rvCO').textContent      = new Date(co).toLocaleDateString('en-IN', fmt);
+  document.getElementById('rvNights').textContent  = nights + (nights===1?' night':' nights');
+  document.getElementById('rvGuests').textContent  = document.getElementById('vbmGuests').value;
+  document.getElementById('rvName').textContent    = (fname+' '+lname).trim();
+  document.getElementById('rvEmail').textContent   = document.getElementById('vbmEmail').value.trim();
+  document.getElementById('rvPhone').textContent   = document.getElementById('vbmPhone').value.trim();
+  document.getElementById('rvTotal').textContent   = '₹' + (nights * v.price).toLocaleString('en-IN');
+}
+
+/* ════════════════════════════════
+   CONFIRM + SEND EMAIL
+════════════════════════════════ */
+async function vbmConfirm() {
+  const btn   = document.getElementById('vbmConfirmBtn');
+  const txtEl = document.getElementById('vbmConfirmTxt');
+  const spinEl= document.getElementById('vbmConfirmLoader');
+  const v     = villas[vbmCurrentVilla];
+  const nights= vbmNights();
+  const ci    = document.getElementById('vbmCheckin').value;
+  const co    = document.getElementById('vbmCheckout').value;
+  const fmt   = { day:'numeric', month:'short', year:'numeric' };
+  const fname = document.getElementById('vbmFname').value.trim();
+  const lname = document.getElementById('vbmLname').value.trim();
+  const email = document.getElementById('vbmEmail').value.trim();
+  const phone = document.getElementById('vbmPhone').value.trim();
+  const reqs  = document.getElementById('vbmRequests').value.trim() || 'None';
+  const total = '₹' + (nights * v.price).toLocaleString('en-IN');
+  const deposit = '₹' + Math.round(nights * v.price * 0.3).toLocaleString('en-IN');
+  const fullName  = (fname + ' ' + lname).trim();
+  const ciStr     = new Date(ci).toLocaleDateString('en-IN', fmt);
+  const coStr     = new Date(co).toLocaleDateString('en-IN', fmt);
+  const guestsVal = document.getElementById('vbmGuests').value;
+
+  btn.disabled = true;
+  txtEl.classList.add('hidden');
+  spinEl.classList.remove('hidden');
+
+  /* ── Clean, beautiful plain-text email ── */
+  const subject = `New Booking Request — ${v.name} — ${fullName}`;
+
+  const message =
+`BOOKMYVILLA — NEW BOOKING REQUEST
+====================================
+
+VILLA DETAILS
+  Name     : ${v.name}
+  Location : ${v.location}
+
+BOOKING DATES
+  Check-in  : ${ciStr}
+  Check-out : ${coStr}
+  Nights    : ${nights} ${nights===1?'night':'nights'}
+  Guests    : ${guestsVal}
+
+PAYMENT
+  Total Amount  : ${total}
+  Deposit (30%) : ${deposit}
+
+GUEST INFORMATION
+  Name     : ${fullName}
+  Email    : ${email}
+  Phone    : ${phone}
+  Requests : ${reqs}
+
+------------------------------------
+TO APPROVE THIS BOOKING
+Reply to this email or write directly to the guest:
+  Guest Email : ${email}
+  Guest Phone : ${phone}
+
+Suggested reply to guest:
+  "Dear ${fname}, your booking at ${v.name} (${ciStr} to ${coStr}) is confirmed.
+  Please transfer the deposit of ${deposit} to HDFC Bank A/C: 1234 5678 9012
+  IFSC: HDFC0001234. Our team will contact you shortly."
+
+====================================
+BookMyVilla | hello@bookmyvilla.in | +91 98000 12345`;
+
+  try {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email : ADMIN_EMAIL,
+      subject  : subject,
+      message  : message,
+    });
+  } catch (err) {
+    console.warn('EmailJS:', err.text || err);
+  }
+
+  document.getElementById('vbmSuccessName').textContent  = fname;
+  document.getElementById('vbmSuccessEmail').textContent = email;
+  vbmCurrentStep = 5;
+  vbmShowPane(5);
+
+  btn.disabled = false;
+  txtEl.classList.remove('hidden');
+  spinEl.classList.add('hidden');
+}
+
+/* ════════════════════════════════
+   TOAST
+════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 5000);
+}
+
+/* ════════════════════════════════
+   INIT
+════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initCursor(); initLoader(); initNav(); initReveal(); initCountUp();
+
+  document.getElementById('vbmOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('vbmOverlay')) closeVbm();
+  });
+  document.getElementById('vbmClose').addEventListener('click', closeVbm);
+
+  const s = document.createElement('style');
+  s.textContent = `@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}`;
+  document.head.appendChild(s);
+});
+
+  </script>
+
+</body>
+</html>
